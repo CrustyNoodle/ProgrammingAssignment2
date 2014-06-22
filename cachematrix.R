@@ -51,7 +51,7 @@ cacheSolve <- function(x, ...) {
     ## Return a matrix that is the inverse of 'x'
     inv <- x$getInverse()
     if(!is.null(inv)) {
-        message("getting cached data")
+        ## message("getting cached data")
         return(inv)
     }
     data <- x$get()
@@ -66,12 +66,41 @@ cacheSolve <- function(x, ...) {
 testMakeCacheMatrix <- function(){
     
     ## generate the test matrix
-    myMat <- matrix(1:9,3,3)
+    myMat <- matrix(runif(9, 0, 100),3,3)
     print(myMat)
     
     ## put this into our cached matrix object
     cachedMatObj <- makeCacheMatrix(myMat)
     
     ## test the cached inverse result (before calculating the inverse)
-    cachedMatObj[getInverse()]
+    print(cachedMatObj$get())
+    print(cachedMatObj$getInverse())
+    
+    ## Try the cacheSolve function
+    print(cacheSolve(cachedMatObj))
+    
+    ## now retry the cached inverse
+    print(cachedMatObj$getInverse())
+    
+    ## now run a speed comparison between the un-cached matrix and the cached one
+    print('Uncached matrix inverse')
+    print(
+        system.time(
+            for(i in 1:10000)
+            {
+                solve(myMat)+1;
+            }
+        )
+    )
+    
+    print('Uncached matrix inverse')
+    print(
+        system.time(
+            for(i in 1:10000)
+            {
+                cacheSolve(cachedMatObj)+1;
+            }
+        )
+    )
+
 }
